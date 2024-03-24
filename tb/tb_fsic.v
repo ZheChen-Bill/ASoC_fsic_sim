@@ -22,7 +22,8 @@
 //	reference https://blog.csdn.net/seabeam/article/details/41078023, the source is come from http://www.deepchip.com/items/0466-07.html
 //	 Not using #0 is a good guideline, except for event data types.  In Verilog, there is no way to defer the event triggering to the nonblocking event queue.
 `define USER_PROJECT_SIDEBAND_SUPPORT 1
-`define USE_EDGEDETECT_IP 1
+//`define USE_EDGEDETECT_IP 1
+`define USE_FIR_IP 1
 
 module tb_fsic #( parameter BITS=32,
 		`ifdef USER_PROJECT_SIDEBAND_SUPPORT
@@ -77,6 +78,8 @@ module tb_fsic #( parameter BITS=32,
 		localparam TID_UP_LA = 2'b10;
 `ifdef USE_EDGEDETECT_IP
 		localparam fpga_axis_test_length = TST_TOTAL_PIXEL_NUM / 4; //each pixel is 8 bits //each transaction 
+`elsif USE_FIR_IP
+		localparam fpga_axis_test_length = 64;
 `else
 		localparam fpga_axis_test_length = 16;
 `endif		
@@ -478,18 +481,18 @@ FSIC #(
 		soc_select_FIR(4'b1111,32'd1);
 
 		FIR_test1();
-		//test_aa_mailbox_soc_cfg();	
+		test_aa_mailbox_soc_cfg();	
 		FIR_Y();	
 
 		error_cnt = 0;
 		check_cnt = 0;
 		soc_to_fpga_axis_expect_count = 0;
 		soc_to_fpga_axis_captured_count = 0;
-/*
+
 		FIR_test2();
 		test_aa_mailbox_soc_cfg();
 		FIR_Y();
-*/
+
 		
 
 		#400;
@@ -1191,7 +1194,6 @@ FSIC #(
 				end 
 			`endif
 
-			
             if (soc_to_fpga_axis_captured_count != fpga_axis_test_length)
                 soc_to_fpga_axis_event_triggered = 0;
 
@@ -2364,6 +2366,9 @@ FSIC #(
         end
     end
 
+    reg        sof;
+    reg        eol;
+
 	task FIR_X;
         reg [31:0] data;
 		`ifdef USER_PROJECT_SIDEBAND_SUPPORT
@@ -2519,7 +2524,7 @@ FSIC #(
 		
 		end
 	endtask
-
+	integer check_idx;
 	task FIR_Y;
 		begin		
 		$display("test FIR start");
@@ -2531,14 +2536,14 @@ FSIC #(
 		$display("-----------------");
 		
 		// check output data		
-		for(i=0;i<64;i=i+1) begin
+		for(check_idx=0;check_idx<64;check_idx=check_idx+1) begin
 			check_cnt = check_cnt + 1;
-			if (soc_to_fpga_axis_expect_value[i][31:0] !== soc_to_fpga_axis_captured[i][31:0]) begin
-				$display($time, "=> [ERROR] expect value[%d] = %x, captured[%d] = %x", i, soc_to_fpga_axis_expect_value[i], i, soc_to_fpga_axis_captured[i]);
+			if (soc_to_fpga_axis_expect_value[check_idx][31:0] !== soc_to_fpga_axis_captured[check_idx][31:0]) begin
+				$display($time, "=> [ERROR] expect value[%d] = %x, captured[%d] = %x", check_idx, soc_to_fpga_axis_expect_value[check_idx][31:0], check_idx, soc_to_fpga_axis_captured[check_idx][31:0]);
 				error_cnt = error_cnt + 1;
 			end	
 			else 
-				$display($time, "=> [PASS] expect_value[%d] = %x, captured[%d] = %x", i, soc_to_fpga_axis_expect_value[i], i, soc_to_fpga_axis_captured[i]);
+				$display($time, "=> [PASS] expect_value[%d] = %x, captured[%d] = %x", check_idx, soc_to_fpga_axis_expect_value[check_idx][31:0], check_idx, soc_to_fpga_axis_captured[check_idx][31:0]);
 		end
 		
 		#100;

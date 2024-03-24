@@ -127,53 +127,52 @@ end
 
 
 
-fir #(.pADDR_WIDTH(12), .pDATA_WIDTH(32), .Tape_Num(11)) U_fir(
-    // Added by me: Coefficient in & ap_start/ap_done/ap_idle (AXI-Lite)
-    .awready        (awready			), //O
-    .wready			(wready				), //O
-    .awvalid		(awvalid			), //I
-    .awaddr			(awaddr				), //I
-    .wvalid			(wvalid				), //I
-    .wdata			(wdata				), //I
-    .arready		(arready			), //O
-    .rready			(rready				), //I
-    .arvalid		(arvalid			), //I
-    .araddr			(araddr				), //I
-    .rvalid			(rvalid				), //O
-    .rdata			(rdata				), //O
+fir #(.pADDR_WIDTH(12), .pDATA_WIDTH(32), .Tape_Num(11)) fir(
+    .awready    (awready			), 
+    .wready			(wready				), 
+    .awvalid		(awvalid			), 
+    .awaddr			(awaddr				), 
+    .wvalid			(wvalid				), 
+    .wdata			(wdata				), 
+    .arready		(arready			), 
+    .rready			(rready				), 
+    .arvalid		(arvalid			), 
+    .araddr			(araddr				), 
+    .rvalid			(rvalid				), 
+    .rdata			(rdata				), 
     // Added by me: Data in (AXI-Stream)
-    .ss_tvalid		(ss_tvalid			), //I
-    .ss_tdata		(ss_tdata			), //I
-    .ss_tlast		(ss_tlast			), //I
-    .ss_tready		(ss_tready			), //O
+    .ss_tvalid		(ss_tvalid			), 
+    .ss_tdata		(ss_tdata			), 
+    .ss_tlast		(ss_tlast			), 
+    .ss_tready		(ss_tready			), 
     // Added by me: Data out (AXI-Stream)
-    .sm_tready		(sm_tready			), //I
-    .sm_tvalid		(sm_tvalid			), //O
-    .sm_tdata		(sm_tdata			), //O
-    .sm_tlast		(sm_tlast			), //O
+    .sm_tready		(sm_tready			), 
+    .sm_tvalid		(sm_tvalid			), 
+    .sm_tdata		(sm_tdata			), 
+    .sm_tlast		(sm_tlast			), 
 						
     // bram for tap RAM
     //tap_WE,					
     //tap_EN,					
-    .tap_WE_merge	(tap_WE_merge		), //O
-    .tap_RE			(tap_RE				), //O
-    .tap_Di			(tap_Di				), //O
+    .tap_WE_merge	(tap_WE_merge		), 
+    .tap_RE			(tap_RE				), 
+    .tap_Di			(tap_Di				), 
     //tap_A,					
-    .tap_A_shifted	(tap_A_shifted		), //O
-    .tap_Do			(tap_Do				), //I
+    .tap_A_shifted	(tap_A_shifted		), 
+    .tap_Do			(tap_Do				), 
 					
     // bram for data RAM
     //data_WE,					
     //data_EN,					
-    .data_WE_merge	(data_WE_merge		), //O
-    .data_RE		(data_RE			), //O
-    .data_Di		(data_Di			), //O
+    .data_WE_merge	(data_WE_merge		), 
+    .data_RE		(data_RE			), 
+    .data_Di		(data_Di			), 
     //data_A,					
-    .data_A_shifted (data_A_shifted		), //O
-    .data_Do		(data_Do			), //I
+    .data_A_shifted (data_A_shifted		), 
+    .data_Do		(data_Do			), 
 					
-    .axis_clk		(axi_clk			), //I
-    .axis_rst_n		(axi_reset_n		)  //I
+    .axis_clk		(axi_clk			), 
+    .axis_rst_n		(axi_reset_n		)  
 );
 // bram for tap RAM
 bram11 tap_RAM (
